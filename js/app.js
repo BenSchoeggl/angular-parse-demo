@@ -6,7 +6,7 @@
 "use strict";
 
 
-angular.module('ToDoApp', [])
+angular.module('ToDoApp', ['ui.bootstrap'])
     .config(function($httpProvider) {
         //Parse required two extra headers sent with every HTTP request: X-Parse-Application-Id, X-Parse-REST-API-Key
         //the first needs to be set to your application's ID value
@@ -89,5 +89,25 @@ angular.module('ToDoApp', [])
                     $scope.updating = false;
                 });
         };
+
+        $scope.incrementVotes = function(amount, task) {
+            var postData = {
+                votes: {
+                    __op: "Increment",
+                    amount: amount
+                }
+            };
+            $scope.updating = true;
+            $http.put(tasksUrl + '/' + task.objectId, postData)
+                .success(function(respData) {
+                    task.votes = respData.votes;
+                })
+                .error(function(err) {
+                    console.log(err);
+                })
+                .finally(function() {
+                    $scope.updating = false;
+                });
+        }
 
     });
